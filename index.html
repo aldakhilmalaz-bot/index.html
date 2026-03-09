@@ -7,37 +7,52 @@
 <style>
 
 body{
-margin:0;
 font-family:Arial;
 text-align:center;
 background:#0b0b2b;
 color:white;
+margin:0;
 }
 
-canvas{
-margin-top:20px;
+#wheel{
+width:320px;
+height:320px;
+margin:30px auto;
 border-radius:50%;
-box-shadow:0 0 30px gold;
+border:8px solid gold;
+
+background:conic-gradient(
+red 0 60deg,
+yellow 60deg 120deg,
+blue 120deg 180deg,
+red 180deg 240deg,
+yellow 240deg 300deg,
+blue 300deg 360deg
+);
+
+transition:transform 4s ease-out;
 }
 
 #pointer{
 width:0;
 height:0;
-border-left:22px solid transparent;
-border-right:22px solid transparent;
+
+border-left:20px solid transparent;
+border-right:20px solid transparent;
 border-bottom:40px solid gold;
+
 margin:auto;
 }
 
 button{
-margin-top:20px;
+
 padding:15px 30px;
 font-size:18px;
 background:orange;
 border:none;
 border-radius:10px;
-color:white;
 cursor:pointer;
+color:white;
 }
 
 #result{
@@ -55,9 +70,7 @@ color:gold;
 
 <div id="pointer"></div>
 
-<canvas id="wheel" width="360" height="360"></canvas>
-
-<br>
+<div id="wheel"></div>
 
 <button onclick="spin()">Rad drehen</button>
 
@@ -65,61 +78,7 @@ color:gold;
 
 <script>
 
-const canvas=document.getElementById("wheel");
-const ctx=canvas.getContext("2d");
-
-const prizes=["20€","25€","30€","20€","25€","30€"];
-
-const colors=[
-"#ff3b3b",
-"#ffd93d",
-"#3399ff",
-"#ff3b3b",
-"#ffd93d",
-"#3399ff"
-];
-
-let rotation=0;
-
-function drawWheel(){
-
-ctx.clearRect(0,0,360,360);
-
-let arc=2*Math.PI/prizes.length;
-
-for(let i=0;i<prizes.length;i++){
-
-let angle=i*arc+rotation;
-
-ctx.beginPath();
-ctx.fillStyle=colors[i];
-ctx.moveTo(180,180);
-ctx.arc(180,180,170,angle,angle+arc);
-ctx.fill();
-
-ctx.save();
-
-ctx.translate(180,180);
-ctx.rotate(angle+arc/2);
-
-ctx.fillStyle="white";
-ctx.font="bold 26px Arial";
-ctx.textAlign="right";
-
-ctx.fillText(prizes[i],150,10);
-
-ctx.restore();
-
-}
-
-ctx.beginPath();
-ctx.arc(180,180,40,0,Math.PI*2);
-ctx.fillStyle="gold";
-ctx.fill();
-
-}
-
-drawWheel();
+let prizes=["20€","25€","30€","20€","25€","30€"];
 
 let spinning=false;
 
@@ -129,45 +88,21 @@ if(spinning) return;
 
 spinning=true;
 
+let wheel=document.getElementById("wheel");
+
 let index=Math.floor(Math.random()*prizes.length);
 
-let arc=2*Math.PI/prizes.length;
+let rotation=720+(index*60);
 
-let targetRotation=(Math.PI*2*5)+(Math.PI*2-(index*arc)-arc/2);
+wheel.style.transform="rotate("+rotation+"deg)";
 
-let start=rotation;
-
-let duration=4000;
-
-let startTime=null;
-
-function animate(time){
-
-if(!startTime) startTime=time;
-
-let progress=time-startTime;
-
-let percent=Math.min(progress/duration,1);
-
-rotation=start+(targetRotation-start)*percent;
-
-drawWheel();
-
-if(percent<1){
-
-requestAnimationFrame(animate);
-
-}else{
-
-spinning=false;
+setTimeout(()=>{
 
 document.getElementById("result").innerText="Gewinn: "+prizes[index];
 
-}
+spinning=false;
 
-}
-
-requestAnimationFrame(animate);
+},4000);
 
 }
 
