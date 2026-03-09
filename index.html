@@ -10,14 +10,14 @@ body{
 margin:0;
 font-family:Arial;
 text-align:center;
-background:radial-gradient(circle,#0b0b2b,#000);
+background:#0b0b2b;
 color:white;
 }
 
 canvas{
 margin-top:20px;
 border-radius:50%;
-box-shadow:0 0 40px gold;
+box-shadow:0 0 30px gold;
 }
 
 #pointer{
@@ -33,7 +33,7 @@ button{
 margin-top:20px;
 padding:15px 30px;
 font-size:18px;
-background:linear-gradient(#ffd700,#ff8c00);
+background:orange;
 border:none;
 border-radius:10px;
 color:white;
@@ -41,9 +41,9 @@ cursor:pointer;
 }
 
 #result{
-font-size:40px;
-color:gold;
 margin-top:20px;
+font-size:35px;
+color:gold;
 }
 
 </style>
@@ -68,7 +68,7 @@ margin-top:20px;
 const canvas=document.getElementById("wheel");
 const ctx=canvas.getContext("2d");
 
-const segments=["20€","25€","30€","20€","25€","30€"];
+const prizes=["20€","25€","30€","20€","25€","30€"];
 
 const colors=[
 "#ff3b3b",
@@ -85,32 +85,28 @@ function drawWheel(){
 
 ctx.clearRect(0,0,360,360);
 
-let arc=2*Math.PI/segments.length;
+let arc=2*Math.PI/prizes.length;
 
-for(let i=0;i<segments.length;i++){
+for(let i=0;i<prizes.length;i++){
 
 let angle=i*arc+rotation;
 
 ctx.beginPath();
-
 ctx.fillStyle=colors[i];
-
 ctx.moveTo(180,180);
 ctx.arc(180,180,170,angle,angle+arc);
-
 ctx.fill();
 
 ctx.save();
 
 ctx.translate(180,180);
-
 ctx.rotate(angle+arc/2);
 
 ctx.fillStyle="white";
 ctx.font="bold 26px Arial";
 ctx.textAlign="right";
 
-ctx.fillText(segments[i],150,10);
+ctx.fillText(prizes[i],150,10);
 
 ctx.restore();
 
@@ -133,11 +129,11 @@ if(spinning) return;
 
 spinning=true;
 
-let index=Math.floor(Math.random()*segments.length);
+let index=Math.floor(Math.random()*prizes.length);
 
-let arc=2*Math.PI/segments.length;
+let arc=2*Math.PI/prizes.length;
 
-let target=(Math.PI*2*5)+(Math.PI*2-(index*arc)-arc/2);
+let targetRotation=(Math.PI*2*5)+(Math.PI*2-(index*arc)-arc/2);
 
 let start=rotation;
 
@@ -145,15 +141,15 @@ let duration=4000;
 
 let startTime=null;
 
-function animate(t){
+function animate(time){
 
-if(!startTime) startTime=t;
+if(!startTime) startTime=time;
 
-let progress=t-startTime;
+let progress=time-startTime;
 
 let percent=Math.min(progress/duration,1);
 
-rotation=start+(target-start)*percent;
+rotation=start+(targetRotation-start)*percent;
 
 drawWheel();
 
@@ -165,7 +161,7 @@ requestAnimationFrame(animate);
 
 spinning=false;
 
-document.getElementById("result").innerText="Gewinn: "+segments[index];
+document.getElementById("result").innerText="Gewinn: "+prizes[index];
 
 }
 
